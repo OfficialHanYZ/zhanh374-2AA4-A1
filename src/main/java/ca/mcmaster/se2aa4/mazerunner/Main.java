@@ -1,8 +1,7 @@
 package ca.mcmaster.se2aa4.mazerunner;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.util.*;
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,8 +52,23 @@ public class Main {
             logger.error("/!\\ An error has occurred while reading the maze file /!\\", e);
         }
 
-        logger.info("**** Computing path");
-        logger.warn("PATH NOT COMPUTED");
-        logger.info("** End of MazeRunner");
+        Maze maze = new Maze(inputMazeFile);
+        Solver solver = new Solver(maze);
+        maze.printMaze();
+        List<Character> path = solver.explore();
+        System.out.println("Path to exit: " + pathToString(path));
+
+        //logger.info("**** Computing path");
+        //logger.warn("PATH NOT COMPUTED");
+        //logger.info("** End of MazeRunner");
     }
+
+    private static String pathToString(List<Character> path) {
+        StringBuilder pathStr = new StringBuilder();
+        for (char step : path) {
+            pathStr.append(step);
+        }
+        return pathStr.toString();
+    }
+
 }
