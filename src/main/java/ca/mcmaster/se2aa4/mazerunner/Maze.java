@@ -6,16 +6,30 @@ import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class Maze {
+public class Maze {
     private char[][] maze;
     private int[] start = new int[2];
     private int[] end = new int[2];
-    private int width; 
-    
-    public Maze(String filename) {
+    private int width;
+    private int height;
+    private String direction;
+
+/* Maze 
+ *
+ * Description: Initializes a maze 
+ * Parameters: filename, the file for the maze. direction, which side to start from
+ */
+
+    public Maze(String filename, String direction) {
+        this.direction = direction;
         loadMaze(filename);
     }
 
+/* loadMaze 
+ *
+ * Description: Puts every node of the maze into a 2d array and gets the start and end coordinates.
+ * Parameters: filename, the file for the maze
+ */
     private void loadMaze(String filename) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filename));
@@ -26,7 +40,7 @@ class Maze {
                 if (!line.trim().isEmpty()) {
                     lines.add(line);
                 } else {
-                    lines.add(" "); 
+                    lines.add(" ");
                 }
             }
 
@@ -40,37 +54,33 @@ class Maze {
             for (String l : lines) {
                 width = Math.max(width, l.length());
             }
-            int height = lines.size();
-            maze = new char[height][width];
+
+            height = lines.size();
+            maze = new char[width][height];
 
             for (int y = 0; y < height; y++) {
                 String row = lines.get(y);
-
                 for (int x = 0; x < width; x++) {
-                    if (x < row.length()) {
-                        maze[y][x] = row.charAt(x);
-                    } else {
-                        maze[y][x] = ' '; 
-                    }
+                    maze[x][y] = (x < row.length()) ? row.charAt(x) : ' ';
                 }
             }
 
-            for (int x = 0; x < maze.length; x++){
-                if (maze[x][0] == ' '){
-                    start[0] = x;
-                    start[1] = 0;
+            for (int y = 0; y < height; y++) {
+                if (maze[0][y] == ' ') {
+                    start[0] = 0;
+                    start[1] = y;
+                }
+                if (maze[width - 1][y] == ' ') {
+                    end[0] = width - 1;
+                    end[1] = y;
                 }
             }
 
-            for (int y = 0; y < maze.length; y++){
-                if (maze[y][width-1] == ' '){
-                    end[0] = y;
-                    end[1] = width-1;
-                }
+            if (direction.equals("east")){
+                int[] temp = start;
+                start = end;
+                end = temp;
             }
-
-            System.out.println(start[0]);
-            System.out.println(end[0]);
 
         } catch (IOException e) {
             System.err.println("Error reading maze file: " + e.getMessage());
@@ -81,40 +91,31 @@ class Maze {
         }
     }
 
-    public void printMaze() {
-        for (int y = 0; y < maze.length; y++) {
-            for (int x = 0; x < maze[0].length; x++) {
-                System.out.print(maze[y][x]); 
-            }
-            System.out.println();
-        }
-    }
-
-    public char getCell(int x, int y) {
-        return maze[y][x];
-    }
-
+/* getStart 
+ *
+ * Description: Returns the starting coords
+ * Output/Return Value: The starting coordinates
+ */
     public int[] getStart() {
         return start;
     }
 
+/* getEnd 
+ *
+ * Description: Returns the ending coords
+ * Output/Return Value: The ending coordinates
+ */
     public int[] getEnd() {
         return end;
     }
 
-    public char[][] getMaze() {
-        return maze;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return maze.length;
-    }
-
-    public boolean isWall(int x, int y) {
-        return maze[y][x] == '#';
+/* isValid 
+ *
+ * Description: Checks if the coordinate that the algorithm intends to go to is valid
+ * Parameters: x and y coordinates
+ * Output/Return Value: True or false depending on if the space is open or a wall
+ */
+    public boolean isValid(int x, int y) {
+        return x >= 0 && x <= width && y >= 0 && y <= height && maze[x][y] == ' ';
     }
 }
