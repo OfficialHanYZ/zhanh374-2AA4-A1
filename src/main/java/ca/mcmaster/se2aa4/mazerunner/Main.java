@@ -48,7 +48,7 @@ public class Main {
             Path path = solveMaze(method, maze, direction);
             if (cmd.getOptionValue("p") != null) {
                 String checkPath = cmd.getOptionValue("p");
-                if (path.getCanonicalForm().equals(checkPath) || path.getFactorizedForm().equals(checkPath)) {
+                if (path.getCanonicalForm().equals(checkPath) || path.getFactorizedForm().replace(" ","").equals(checkPath.replace(" ",""))) {
                     System.out.println("Correct path");
                 } else {
                     System.out.println("incorrect path");
@@ -85,3 +85,4 @@ public class Main {
     }
 
 }
+
