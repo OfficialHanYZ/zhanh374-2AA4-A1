@@ -45,7 +45,8 @@ public class Main {
             String direction = "west"; //Can change which side to start from
             Maze maze = new Maze(inputMazeFile, direction);
             String method = cmd.getOptionValue("method", "righthand");
-            Path path = solveMaze(method, maze, direction);
+            Solver solver = SolverFactory.createSolver(method,direction);
+            Path path = solver.solve(maze);
             if (cmd.getOptionValue("p") != null) {
                 String checkPath = cmd.getOptionValue("p");
                 if (path.getCanonicalForm().equals(checkPath) || path.getFactorizedForm().replace(" ","").equals(checkPath.replace(" ",""))) {
@@ -62,26 +63,6 @@ public class Main {
             System.exit(1);
         }
 
-    }
-
-/* solveMaze 
- *
- * Description: The algorithm selection that the maze will be solved by.
- * Parameters: method, to solve maze with. maze, the maze to solve. direction, the side to start at
- * Output/Return Value: A list of all the path steps
- */
-    private static Path solveMaze(String method, Maze maze, String direction) throws Exception {
-        Solver solver = null;
-        switch (method) {
-            case "righthand" -> {
-                solver = new RightHandAlgorithm(direction);
-            }
-       
-            default -> {
-                System.exit(1);
-            }
-        }
-        return solver.solve(maze);
     }
 
 }
